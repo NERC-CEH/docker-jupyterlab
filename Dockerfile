@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook:ae5f7e104dd5
+FROM jupyter/minimal-notebook:2ce7c06a61a1
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -16,10 +16,19 @@ RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
     fix-permissions $CONDA_DIR
 
 USER $NB_UID
+
 # Add Git integration
 RUN pip install --no-cache-dir jupyterlab-git && \
     jupyter labextension install @jupyterlab/git && \
     jupyter serverextension enable --py jupyterlab_git --sys-prefix
+
+# Add support for Widgets & Plots
+RUN pip install --no-cache-dir ipywidgets \
+      ipyleaflet && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+    jupyter labextension install jupyter-leaflet && \
+    jupyter labextension install @jupyterlab/plotly-extension
 
 USER root
 
@@ -41,4 +50,3 @@ COPY env-control /usr/local/bin/env-control
 RUN chmod 755 /usr/local/bin/env-control
 
 USER $NB_UID
-
