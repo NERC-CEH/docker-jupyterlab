@@ -30,6 +30,18 @@ RUN pip install --no-cache-dir ipywidgets \
     jupyter labextension install jupyter-leaflet && \
     jupyter labextension install @jupyterlab/plotly-extension
 
+# Bake Dask/Dask-Kubernetes libraries into base Conda Environment
+RUN conda install -y \
+      dask=2.4 \
+      distributed=2.4 \
+      dask-kubernetes=0.9.2 \
+      dask-gateway=0.3.0 \
+      bokeh=1.3 \
+      jupyter-server-proxy=1.1 \
+      tornado=6 \
+      graphviz=2.40 \
+      nbgitpuller=0.7
+
 USER root
 
 RUN apt-get update && apt-get install -yq --no-install-recommends \
