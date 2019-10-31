@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook:2ce7c06a61a1
+FROM jupyter/pyspark-notebook:1386e2046833
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -9,6 +9,11 @@ ENV JUPYTER_ENABLE_LAB="yes"
 WORKDIR /home/$NB_USER/work
 
 USER root
+
+# Install S3 Libraries
+RUN wget -q http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar -O /usr/local/spark/jars/hadoop-aws-2.7.3.jar
+RUN wget -q http://central.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O /usr/local/spark/jars/aws-java-sdk-1.7.4.jar
+
 # Set up Datalab user (replacing default jovyan user)
 RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
     mkdir -p $CONDA_DIR/pkgs/cache && \
