@@ -20,15 +20,15 @@ kubernetes:
           - '2'
           - --no-bokeh
           - --memory-limit
-          - "4GB"
+          - "6GB"
           - --death-timeout
           - '60'
         image: daskdev/dask:latest
         name: dask-docker
         resources:
           limits:
-            cpu: "1.5"
-            memory: "4G"
+            cpu: "2"
+            memory: "6G"
 
 labextension:
   factory:
