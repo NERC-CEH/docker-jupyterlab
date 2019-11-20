@@ -34,10 +34,6 @@ RUN pip install --no-cache-dir ipywidgets \
 RUN pip install --no-cache-dir dask_labextension && \
     jupyter labextension install dask-labextension@1.0.1
 
-# Setup Dask Config
-RUN mkdir -p $CONDA_DIR/etc/dask/
-ADD dask_config.yaml /opt/conda/etc/dask/dask.yaml
-
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
       dask=2.5 \
