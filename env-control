@@ -2,12 +2,14 @@
 # Wrapper to control creation/deletion of Conda Environments within JupyterLab hosted on Datalabs
 
 ENV_NAME=$2
-ENV_BASE=${CONDA_ENV_DIR:-/data/conda/}
 KERNEL_BASE=${JUPYTER_DATA_DIR:-/data/.jupyter}
-ENV_PATH=$ENV_BASE/$ENV_NAME
+ENV_BASE=${CONDA_ENV_DIR:-/data/conda}
+USER_ID="1000"
+USER_GID="100"
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
+
 
 function logger () {
   echo -e "${GREEN}[`date +%H:%M:%S/%d-%h`]: $1 ${NC}"
@@ -26,6 +28,9 @@ This simple command can be used to create or delete conda environments, see usag
 Adding
 env-control add NEW_CONDA_ENVIRONMENT
 
+Add JupyterLab Environment
+env-control --jupyterlab add NEW_CONDA_ENVIRONMENT
+
 Removing
 env-control remove CURRENT_CONDA_ENVIRONMENT
 
@@ -35,17 +40,31 @@ env-control remove CURRENT_CONDA_ENVIRONMENT
 function create_env {
   logger "Creating environment $ENV_NAME"
   mkdir -p $ENV_BASE
-  conda create --prefix $ENV_PATH -y
+
+  if [ -d $ENV_PATH ]; then
+    logger "$ENV_PATH already exists, not overriding"
+    exit
+  fi
+
+  if [ "$JUPYTERLAB" == "1" ]; then
+    conda create --prefix $ENV_PATH --clone base
+  else
+    conda create --prefix $ENV_PATH -y
+  fi
+
   source activate $ENV_PATH
+
+  logger "Building JupyterLab assets"
+  jupyter lab build --minimize=False
+
   logger "Installing ipykernel & irkernel"
-  conda install ipykernel r-irkernel -y
+  conda install ipykernel r-irkernel readline -y
   if [ "$?" != "0" ]; then
     error "Failed to install ipython and irkernel"
   fi
 
   logger "Setting up python Kernel"
   create_env_python
-
 
   logger "Setting up R Kernel"
   create_env_R
@@ -55,30 +74,61 @@ function remove_env {
   logger "Removing environment $ENV_NAME"
   conda env remove -p $ENV_PATH -y
   if [ -d $KERNEL_BASE/kernels/ ]; then
-    rm -rf $KERNEL_BASE/kernels/$ENV_NAME-python
-    rm -rf $KERNEL_BASE/kernels/$ENV_NAME-python
+    rm -rf $KERNEL_BASE/kernels/${ENV_NAME}-python
+    rm -rf $KERNEL_BASE/kernels/${ENV_NAME}-r
   fi
   logger "Environment removed - $ENV_NAME, please restart browser for Kernel deletion to complete."
 }
 
 function create_env_python {
-  python -m ipykernel install --user --name $ENV_NAME-python --display-name "python-$ENV_NAME"
+  if [ "$JUPYTERLAB" == "1" ]; then
+    jupyter kernelspec remove python3 -y
+    python -m ipykernel install --user --name python3 --display-name "$ENV_NAME"
+  else
+    python -m ipykernel install --user --name ${ENV_NAME}-python --display-name "$ENV_NAME"
+  fi
   if [ "$?" != "0" ]; then
     error "Failed to install Python kernel, please troubleshoot"
   fi
 }
 
 function create_env_R {
-  R -e "IRkernel::installspec(name = '$ENV_NAME-R', displayname = 'R-$ENV_NAME')"
+  if [ "$JUPYTERLAB" == "1" ]; then
+    R -e "IRkernel::installspec(name = 'ir', displayname = '$ENV_NAME')"
+  else
+    R -e "IRkernel::installspec(name = '${ENV_NAME}-r', displayname = '$ENV_NAME')"
+  fi
   if [ "$?" != "0" ]; then
     error "Failed to install R kernel ipython, please troubleshoot"
   fi
 }
 
-if [ "$1" == "add" ]; then
+#
+# main
+#
+
+while [ -n "$1" ]; do
+  case "$1" in
+    --jupyterlab)
+      JUPYTERLAB="1" ;;
+    add)
+      OPERATION="add"
+      ENV_NAME=$2 ;;
+    remove)
+      OPERATION="remove"
+      ENV_NAME=$2 ;;
+  esac
+  shift
+done
+
+ENV_PATH=$ENV_BASE/$ENV_NAME
+logger "Command called, Operation = $OPERATION, Environment = $ENV_NAME, Path = $ENV_PATH"
+
+if [ "$OPERATION" == "add" ]; then
   create_env
+  chown -R $USER_ID:$USER_GID $ENV_BASE $KERNEL_BASE
   logger "Environment setup - $ENV_NAME complete, please restart browser for Kernel to be available."
-elif [ "$1" == "remove" ]; then
+elif [ "$OPERATION" == "remove" ]; then
   remove_env
   logger "Environment setup - $ENV_NAME complete, please restart browser for Kernel to be available."
 else

@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:1386e2046833
+FROM jupyter/pyspark-notebook:7a0c7325e470
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -11,8 +11,8 @@ WORKDIR /home/$NB_USER/work
 USER root
 
 # Install S3 Libraries
-RUN wget -q http://central.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar -O /usr/local/spark/jars/hadoop-aws-2.7.3.jar
-RUN wget -q http://central.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O /usr/local/spark/jars/aws-java-sdk-1.7.4.jar
+RUN wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar -O /usr/local/spark/jars/hadoop-aws-2.7.3.jar
+RUN wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O /usr/local/spark/jars/aws-java-sdk-1.7.4.jar
 
 # Set up Datalab user (replacing default jovyan user)
 RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
@@ -41,15 +41,14 @@ RUN pip install --no-cache-dir dask_labextension && \
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
-      dask=2.5 \
-      distributed=2.5.2 \
-      dask-kubernetes=0.10.0 \
-      dask-gateway=0.3.0 \
-      bokeh=1.3 \
-      jupyter-server-proxy=1.1 \
+      dask=2.9 \
+      distributed=2.9 \
+      dask-kubernetes=0.10 \
+      dask-gateway=0.6 \
+      bokeh=1.4 \
+      jupyter-server-proxy=1.2 \
       tornado=6 \
-      graphviz=2.40 \
-      nbgitpuller=0.7
+      nbgitpuller=0.8
 
 USER root
 
