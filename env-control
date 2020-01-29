@@ -126,7 +126,8 @@ logger "Command called, Operation = $OPERATION, Environment = $ENV_NAME, Path = 
 
 if [ "$OPERATION" == "add" ]; then
   create_env
-  chown -R $USER_ID:$USER_GID $ENV_BASE $KERNEL_BASE
+  logger "Changing UID, GID to $USER_ID, $USER_GID for DataLab user"
+  chown -R $USER_ID:$USER_GID $ENV_PATH $KERNEL_BASE
   logger "Environment setup - $ENV_NAME complete, please restart browser for Kernel to be available."
 elif [ "$OPERATION" == "remove" ]; then
   remove_env
