@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:7a0c7325e470
+FROM jupyter/pyspark-notebook:dc9744740e12
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -23,21 +23,23 @@ RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
 USER $NB_UID
 
 # Add Git integration
-RUN pip install --no-cache-dir jupyterlab-git && \
-    jupyter labextension install @jupyterlab/git && \
-    jupyter serverextension enable --py jupyterlab_git --sys-prefix
-
+#RUN pip install --no-cache-dir jupyterlab-git && \
+#    jupyter labextension install @jupyterlab/git && \
+#    jupyter serverextension enable --py jupyterlab_git --sys-prefix
+#ValueError: The extension "@jupyterlab/git" does not yet support the current version of JupyterLab.
+#
+#
 # Add support for Widgets & Plots
-RUN pip install --no-cache-dir ipywidgets \
-      ipyleaflet && \
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
-    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter labextension install jupyter-leaflet && \
-    jupyter labextension install @jupyterlab/plotly-extension
-
+#RUN pip install --no-cache-dir ipywidgets \
+#      ipyleaflet && \
+#    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
+#    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
+#    jupyter labextension install jupyter-leaflet && \
+#    jupyter labextension install @jupyterlab/plotly-extension
+#
 # Add Dask Labextension
-RUN pip install --no-cache-dir dask_labextension && \
-    jupyter labextension install dask-labextension@1.0.1
+#RUN pip install --no-cache-dir dask_labextension && \
+#    jupyter labextension install dask-labextension@1.0.1
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
