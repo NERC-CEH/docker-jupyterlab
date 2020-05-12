@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:7a0c7325e470
+FROM jupyter/pyspark-notebook:3b1f4f5e6cc1
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -32,23 +32,23 @@ RUN pip install --no-cache-dir ipywidgets \
       ipyleaflet && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter labextension install jupyter-leaflet && \
-    jupyter labextension install @jupyterlab/plotly-extension
+    jupyter labextension install jupyter-leaflet
 
 # Add Dask Labextension
 RUN pip install --no-cache-dir dask_labextension && \
-    jupyter labextension install dask-labextension@1.0.1
+    jupyter labextension install dask-labextension@2.0.2
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
-      dask=2.9 \
-      distributed=2.9 \
+      dask=2.15 \
+      distributed=2.15 \
       dask-kubernetes=0.10 \
       dask-gateway=0.6 \
+      jupyter-server-proxy=1.1.0 \
       bokeh=1.4 \
-      jupyter-server-proxy=1.2 \
       tornado=6 \
-      nbgitpuller=0.8
+      nbgitpuller=0.8 \
+      lz4=3.0.2
 
 USER root
 
