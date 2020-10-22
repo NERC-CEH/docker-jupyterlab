@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:3b1f4f5e6cc1
+FROM jupyter/pyspark-notebook:f200ab964cea
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -36,19 +36,20 @@ RUN pip install --no-cache-dir ipywidgets \
 
 # Add Dask Labextension
 RUN pip install --no-cache-dir dask_labextension && \
-    jupyter labextension install dask-labextension@2.0.2
+    jupyter labextension install dask-labextension@3.0.0
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
-      dask=2.15 \
-      distributed=2.15 \
-      dask-kubernetes=0.10 \
-      dask-gateway=0.6 \
+      dask=2.30 \
+      distributed=2.30 \
+      dask-kubernetes=0.10.1 \
+      dask-gateway=0.8 \
       jupyter-server-proxy=1.1.0 \
-      bokeh=1.4 \
+      bokeh=2.1.1 \
       tornado=6 \
       nbgitpuller=0.8 \
-      lz4=3.0.2
+      blosc==1.9.2 \
+      lz4=3.1.0
 
 USER root
 
