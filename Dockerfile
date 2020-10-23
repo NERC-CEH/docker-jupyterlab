@@ -48,7 +48,6 @@ RUN conda install -y \
       bokeh=2.1.1 \
       tornado=6 \
       nbgitpuller=0.8 \
-      blosc==1.9.2 \
       lz4=3.1.0
 
 USER root
