@@ -45,7 +45,7 @@ RUN conda install -y \
       dask-kubernetes=0.10.1 \
       dask-gateway=0.8 \
       jupyter-server-proxy=1.1.0 \
-      bokeh=2.1.1 \
+      bokeh=1 \
       tornado=6 \
       nbgitpuller=0.8 \
       lz4=3.1.0
