@@ -23,20 +23,20 @@ RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
 USER $NB_UID
 
 # Add Git integration
-RUN pip install --no-cache-dir jupyterlab-git && \
+RUN pip install --no-cache-dir jupyterlab-git==0.23.3 && \
     jupyter labextension install @jupyterlab/git && \
     jupyter serverextension enable --py jupyterlab_git --sys-prefix
 
 # Add support for Widgets & Plots
-RUN pip install --no-cache-dir ipywidgets \
-      ipyleaflet && \
+RUN pip install --no-cache-dir ipywidgets==7.6.3 \
+      ipyleaflet==0.13.6 && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter labextension install jupyter-leaflet
 
 # Add Dask Labextension
 # JupyterLab 3.0 or greater - https://pypi.org/project/dask-labextension/
-RUN pip install --no-cache-dir dask-labextension
+RUN pip install --no-cache-dir dask-labextension==5.0.0
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
