@@ -28,8 +28,8 @@ RUN pip install --no-cache-dir jupyterlab-git==0.23.3 && \
     jupyter serverextension enable --py jupyterlab_git --sys-prefix
 
 # Add support for Widgets & Plots
-RUN pip install --no-cache-dir ipywidgets==7.6.3 \
-      ipyleaflet==0.13.6 && \
+RUN pip install --no-cache-dir ipywidgets \
+    ipyleaflet && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter labextension install jupyter-leaflet
@@ -40,15 +40,15 @@ RUN pip install --no-cache-dir dask-labextension==5.0.0
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
-      dask=2.30 \
-      distributed=2.30 \
-      dask-kubernetes=0.10.1 \
-      dask-gateway=0.8 \
-      jupyter-server-proxy=1.5.0 \
-      bokeh=1 \
-      tornado=6 \
-      nbgitpuller=0.8 \
-      lz4=3.1.0
+    dask=2.30 \
+    distributed=2.30 \
+    dask-kubernetes=0.10.1 \
+    dask-gateway=0.8 \
+    jupyter-server-proxy=1.5.0 \
+    bokeh=1 \
+    tornado=6 \
+    nbgitpuller=0.8 \
+    lz4=3.1.0
 
 USER root
 
