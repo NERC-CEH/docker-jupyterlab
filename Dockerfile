@@ -28,8 +28,8 @@ RUN pip install --no-cache-dir jupyterlab-git==0.23.3 && \
     jupyter serverextension enable --py jupyterlab_git --sys-prefix
 
 # Add support for Widgets & Plots
-RUN pip install --no-cache-dir ipywidgets \
-    ipyleaflet && \
+RUN pip install --no-cache-dir ipywidgets==7.6.3 \
+    ipyleaflet==0.13.6 && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter labextension install jupyter-leaflet
