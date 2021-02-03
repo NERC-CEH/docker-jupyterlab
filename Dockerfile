@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:f200ab964cea
+FROM jupyter/pyspark-notebook:7e07b801d92b
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -11,8 +11,8 @@ WORKDIR /home/$NB_USER/work
 USER root
 
 # Install S3 Libraries
-RUN wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/2.7.3/hadoop-aws-2.7.3.jar -O /usr/local/spark/jars/hadoop-aws-2.7.3.jar
-RUN wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk/1.7.4/aws-java-sdk-1.7.4.jar -O /usr/local/spark/jars/aws-java-sdk-1.7.4.jar
+RUN wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar -O /usr/local/spark/jars/hadoop-aws-3.2.0.jar
+RUN wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.563/aws-java-sdk-bundle-1.11.563.jar -O /usr/local/spark/jars/aws-java-sdk-bundle-1.11.563.jar
 
 # Set up Datalab user (replacing default jovyan user)
 RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
@@ -23,20 +23,20 @@ RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
 USER $NB_UID
 
 # Add Git integration
-RUN pip install --no-cache-dir jupyterlab-git && \
+RUN pip install --no-cache-dir jupyterlab-git==0.23.3 && \
     jupyter labextension install @jupyterlab/git && \
     jupyter serverextension enable --py jupyterlab_git --sys-prefix
 
 # Add support for Widgets & Plots
-RUN pip install --no-cache-dir ipywidgets \
-    ipyleaflet && \
+RUN pip install --no-cache-dir ipywidgets==7.6.3 \
+    ipyleaflet==0.13.6 && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter labextension install jupyter-leaflet
 
 # Add Dask Labextension
-RUN pip install --no-cache-dir dask_labextension && \
-    jupyter labextension install dask-labextension@3.0.0
+# JupyterLab 3.0 or greater - https://pypi.org/project/dask-labextension/
+RUN pip install --no-cache-dir dask-labextension==5.0.0
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
