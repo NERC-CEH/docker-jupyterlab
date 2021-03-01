@@ -6,6 +6,7 @@ ENV NB_GID 100
 ENV HOME /home/datalab
 ENV CONDA_DIR /opt/conda
 ENV JUPYTER_ENABLE_LAB="yes"
+ENV DASK_VERSION 2.30
 WORKDIR /home/$NB_USER/work
 
 USER root
@@ -40,8 +41,8 @@ RUN pip install --no-cache-dir dask-labextension==5.0.0
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
-    dask=2.30 \
-    distributed=2.30 \
+    dask=$DASK_VERSION \
+    distributed=$DASK_VERSION \
     dask-kubernetes=0.10.1 \
     dask-gateway=0.8 \
     jupyter-server-proxy=1.5.0 \
