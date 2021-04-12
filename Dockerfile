@@ -17,6 +17,7 @@ RUN wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.1
 
 # Set up Datalab user (replacing default jovyan user)
 RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
+    mkdir -p /home/$NB_USER/.jupyter && \
     mkdir -p $CONDA_DIR/pkgs/cache && \
     chown -R $NB_USER:$NB_GID /home/$NB_USER $CONDA_DIR/pkgs/cache && \
     fix-permissions $CONDA_DIR
