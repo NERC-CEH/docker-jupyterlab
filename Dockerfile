@@ -34,7 +34,9 @@ RUN pip install --no-cache-dir ipywidgets==7.6.3 \
     ipyleaflet==0.13.6 && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter labextension install jupyter-leaflet
+    jupyter labextension install jupyter-leaflet && \
+    jupyter labextension install jupyterlab-plotly && \
+    jupyter lab build
 
 # Add Dask Labextension
 # JupyterLab 3.0 or greater - https://pypi.org/project/dask-labextension/
