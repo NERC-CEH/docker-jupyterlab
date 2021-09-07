@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:7e07b801d92b
+FROM jupyter/pyspark-notebook:spark-3.1.2
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -6,7 +6,7 @@ ENV NB_GID 100
 ENV HOME /home/datalab
 ENV CONDA_DIR /opt/conda
 ENV JUPYTER_ENABLE_LAB="yes"
-ENV DASK_VERSION 2.30
+ENV DASK_VERSION "2021.6.2"
 WORKDIR /home/$NB_USER/work
 
 USER root
@@ -25,13 +25,12 @@ RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
 USER $NB_UID
 
 # Add Git integration
-RUN pip install --no-cache-dir jupyterlab-git==0.23.3 && \
-    jupyter labextension install @jupyterlab/git && \
-    jupyter serverextension enable --py jupyterlab_git --sys-prefix
+RUN pip install --no-cache-dir jupyterlab-git==0.30.1 && \
+    jupyter labextension install @jupyterlab/git@0.30.1
 
 # Add support for Widgets & Plots
 RUN pip install --no-cache-dir ipywidgets==7.6.3 \
-    ipyleaflet==0.13.6 && \
+    ipyleaflet==0.14.0 && \
     jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
     jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
     jupyter labextension install jupyter-leaflet && \
@@ -40,19 +39,19 @@ RUN pip install --no-cache-dir ipywidgets==7.6.3 \
 
 # Add Dask Labextension
 # JupyterLab 3.0 or greater - https://pypi.org/project/dask-labextension/
-RUN pip install --no-cache-dir dask-labextension==5.0.0
+RUN pip install --no-cache-dir dask-labextension==5.0.2
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN conda install -y \
     dask=$DASK_VERSION \
     distributed=$DASK_VERSION \
-    dask-kubernetes=0.10.1 \
-    dask-gateway=0.8 \
-    jupyter-server-proxy=1.5.0 \
-    bokeh=1 \
-    tornado=6 \
-    nbgitpuller=0.8 \
-    lz4=3.1.0
+    dask-kubernetes=2021.3.1 \
+    dask-gateway=0.9.0 \
+    jupyter-server-proxy=3.0.2 \
+    bokeh=2.3.2 \
+    tornado=6.1 \
+    nbgitpuller=0.10.1 \
+    lz4=3.1.3
 
 USER root
 
