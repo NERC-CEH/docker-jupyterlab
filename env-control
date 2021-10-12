@@ -57,10 +57,10 @@ function create_env {
   logger "Building JupyterLab assets"
   jupyter lab build --minimize=False
 
-  logger "Installing dask, ipykernel & irkernel"
-  conda install dask=$DASK_VERSION ipykernel r-irkernel readline -y
+  logger "Installing Dask, Spark, ipykernel & irkernel"
+  conda install dask=$DASK_VERSION ipykernel r-irkernel readline pyspark -y
   if [ "$?" != "0" ]; then
-    error "Failed to install dask, ipython and irkernel"
+    error "Failed to install Dask, Spark ipython and irkernel"
   fi
 
   logger "Setting up python Kernel"
