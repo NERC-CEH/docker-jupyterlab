@@ -51,7 +51,11 @@ RUN conda install -y \
     bokeh=2.3.2 \
     tornado=6.1 \
     nbgitpuller=0.10.1 \
-    lz4=3.1.3
+    lz4=3.1.3 \ 
+    voila=0.2.16
+
+# Install Panel from the pyviz channel
+RUN conda install -y -c pyviz panel
 
 USER root
 
