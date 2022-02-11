@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:spark-3.1.2
+FROM jupyter/pyspark-notebook:spark-3.2.0
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -24,25 +24,19 @@ RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
 
 USER $NB_UID
 
-# Add Git integration
-RUN pip install --no-cache-dir jupyterlab-git==0.30.1 && \
-    jupyter labextension install @jupyterlab/git@0.30.1
+# Add Mamba for Speedy installs
+RUN conda install mamba -y
 
-# Add support for Widgets & Plots
-RUN pip install --no-cache-dir ipywidgets==7.6.3 \
-    ipyleaflet==0.14.0 && \
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager && \
-    jupyter nbextension enable --py widgetsnbextension --sys-prefix && \
-    jupyter labextension install jupyter-leaflet && \
-    jupyter labextension install jupyterlab-plotly && \
-    jupyter lab build
-
-# Add Dask Labextension
-# JupyterLab 3.0 or greater - https://pypi.org/project/dask-labextension/
-RUN pip install --no-cache-dir dask-labextension==5.0.2
+# Install Panel from the pyviz channel
+RUN mamba install -y -c pyviz panel
+# Install Plotly from Ployly channel
+RUN mamba install -y -c plotly plotly
+# Install dask labextension/ipywidgets/git integration/leaflet
+RUN mamba install -y dask-labextension ipywidgets jupyterlab-git ipyleaflet nodejs
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
-RUN conda install -y \
+RUN mamba install -y -c conda-forge\
+    ipyleaflet \
     dask=$DASK_VERSION \
     distributed=$DASK_VERSION \
     dask-kubernetes=2021.3.1 \
@@ -52,16 +46,16 @@ RUN conda install -y \
     tornado=6.1 \
     nbgitpuller=0.10.1 \
     lz4=3.1.3 \ 
-    voila=0.2.16
+    voila=0.2.16 \
+    ipympl
 
-# Install Panel from the pyviz channel
-RUN conda install -y -c pyviz panel
+RUN jupyter lab build
 
 USER root
 
 RUN apt-get update && apt-get install -yq --no-install-recommends \
-    vim \
-    && rm -rf /var/lib/apt/lists/*
+    vim && \
+    rm -rf /var/lib/apt/lists/*
 
 # Hotfix to remove temporary local files created during build causing problems and fix permissions on pkg cache
 # Similiar to;
