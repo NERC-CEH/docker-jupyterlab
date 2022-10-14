@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:spark-3.2.0
+FROM jupyter/pyspark-notebook:spark-3.2.1
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -6,7 +6,7 @@ ENV NB_GID 100
 ENV HOME /home/datalab
 ENV CONDA_DIR /opt/conda
 ENV JUPYTER_ENABLE_LAB="yes"
-ENV DASK_VERSION "2021.6.2"
+ENV DASK_VERSION "2022.4.1"
 WORKDIR /home/$NB_USER/work
 
 USER root
@@ -32,21 +32,21 @@ RUN mamba install -y -c pyviz panel
 # Install Plotly from Ployly channel
 RUN mamba install -y -c plotly plotly
 # Install dask labextension/ipywidgets/git integration/leaflet
-RUN mamba install -y dask-labextension ipywidgets jupyterlab-git ipyleaflet nodejs
+RUN mamba install -y dask-labextension ipywidgets jupyterlab-git ipyleaflet nodejs widgetsnbextension
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN mamba install -y -c conda-forge\
     ipyleaflet \
     dask=$DASK_VERSION \
     distributed=$DASK_VERSION \
-    dask-kubernetes=2021.3.1 \
+    dask-kubernetes=2022.1.0 \
     dask-gateway=0.9.0 \
-    jupyter-server-proxy=3.0.2 \
-    bokeh=2.3.2 \
+    jupyter-server-proxy=3.2.1 \
+    bokeh=2.4.2 \
     tornado=6.1 \
     nbgitpuller=0.10.1 \
-    lz4=3.1.3 \ 
-    voila=0.2.16 \
+    lz4=4.0.0 \ 
+    voila=0.3.5 \
     ipympl
 
 RUN jupyter lab build
@@ -70,4 +70,8 @@ COPY env-control /usr/local/bin/env-control
 # Make env-control executable
 RUN chmod 755 /usr/local/bin/env-control
 
+# Touch Assets Folder
+RUN mkdir /assets
+
 USER $NB_UID
+

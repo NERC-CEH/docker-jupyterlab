@@ -23,7 +23,7 @@ function error () {
 function print_help {
   echo "
 
-This simple command can be used to create or delete conda environments, see usage below;
+This simple command can be used to create or delete mamba environments, see usage below;
 
 Adding
 env-control add NEW_CONDA_ENVIRONMENT
@@ -47,9 +47,9 @@ function create_env {
   fi
 
   if [ "$JUPYTERLAB" == "1" ]; then
-    conda create --prefix $ENV_PATH --clone base
+    mamba create --prefix $ENV_PATH --clone base
   else
-    conda create --prefix $ENV_PATH -y
+    mamba create --prefix $ENV_PATH -y
   fi
 
   source activate $ENV_PATH
@@ -58,7 +58,7 @@ function create_env {
   jupyter lab build --minimize=False
 
   logger "Installing Dask, Spark, ipykernel & irkernel"
-  conda install dask=$DASK_VERSION ipykernel r-irkernel readline pyspark -y
+  mamba install dask=$DASK_VERSION ipykernel r-irkernel readline pyspark -y
   if [ "$?" != "0" ]; then
     error "Failed to install Dask, Spark ipython and irkernel"
   fi
@@ -72,7 +72,7 @@ function create_env {
 
 function remove_env {
   logger "Removing environment $ENV_NAME"
-  conda env remove -p $ENV_PATH -y
+  mamba env remove -p $ENV_PATH -y
   if [ -d $KERNEL_BASE/kernels/ ]; then
     rm -rf $KERNEL_BASE/kernels/${ENV_NAME}-python
     rm -rf $KERNEL_BASE/kernels/${ENV_NAME}-r
