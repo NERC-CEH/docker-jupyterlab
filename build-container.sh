@@ -9,7 +9,7 @@ IMAGE="jupyterlab"
 GIT_DESCRIBE=`git describe --tags --always`
 echo "git describe $GIT_DESCRIBE"
 
-docker build -f build/Dockerfile -t nerc/$IMAGE:latest .
+docker build -f Dockerfile -t nerc/$IMAGE:latest .
 docker tag nerc/$IMAGE:latest nerc/$IMAGE:$GIT_DESCRIBE
 
 echo "Attempting to push image..."
