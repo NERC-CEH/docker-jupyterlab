@@ -1,4 +1,4 @@
-FROM jupyter/pyspark-notebook:spark-3.2.1
+FROM quay.io/jupyter/pyspark-notebook:spark-3.5.1
 
 ENV NB_USER datalab
 ENV NB_UID 1000
@@ -6,14 +6,13 @@ ENV NB_GID 100
 ENV HOME /home/datalab
 ENV CONDA_DIR /opt/conda
 ENV JUPYTER_ENABLE_LAB="yes"
-ENV DASK_VERSION "2022.4.1"
 WORKDIR /home/$NB_USER/work
 
 USER root
 
 # Install S3 Libraries
-RUN wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.2.0/hadoop-aws-3.2.0.jar -O /usr/local/spark/jars/hadoop-aws-3.2.0.jar
-RUN wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.11.563/aws-java-sdk-bundle-1.11.563.jar -O /usr/local/spark/jars/aws-java-sdk-bundle-1.11.563.jar
+RUN wget -q https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.4.0/hadoop-aws-3.4.0.jar -O /usr/local/spark/jars/hadoop-aws-3.4.0.jar
+RUN wget -q https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.765/aws-java-sdk-bundle-1.12.765.jar -O /usr/local/spark/jars/aws-java-sdk-bundle-1.12.765.jar
 
 # Set up Datalab user (replacing default jovyan user)
 RUN usermod -l $NB_USER -d /home/$NB_USER jovyan && \
@@ -28,28 +27,34 @@ USER $NB_UID
 RUN conda install mamba -y
 
 # Install Panel from the pyviz channel
-RUN mamba install -y -c pyviz panel
+RUN mamba install -y conda-forge::panel
 # Install Plotly from Ployly channel
-RUN mamba install -y -c plotly plotly
+RUN mamba install -y conda-forge::plotly
+# Install nodejs
+RUN mamba install -y conda-forge::nodejs
 # Install dask labextension/ipywidgets/git integration/leaflet
-RUN mamba install -y dask-labextension ipywidgets jupyterlab-git ipyleaflet nodejs widgetsnbextension
+RUN mamba install -y dask-labextension ipywidgets jupyterlab-git ipyleaflet widgetsnbextension
 
 # Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN mamba install -y -c conda-forge\
     ipyleaflet \
-    dask=$DASK_VERSION \
-    distributed=$DASK_VERSION \
-    dask-kubernetes=2022.1.0 \
-    dask-gateway=0.9.0 \
-    jupyter-server-proxy=3.2.1 \
-    bokeh=2.4.2 \
-    tornado=6.1 \
-    nbgitpuller=0.10.1 \
-    lz4=4.0.0 \ 
-    voila=0.3.5 \
+    dask \
+    distributed \
+    dask-kubernetes \
+    dask-gateway \
+    jupyter-server-proxy \
+    bokeh \
+    tornado \
+    nbgitpuller \
+    lz4 \ 
+    voila \
     ipympl
 
-RUN jupyter lab build
+# Add Jupyter Collaboration
+RUN pip install jupyter-collaboration
+
+
+RUN jupyter lab build --minimize=True --dev-build=False
 
 USER root
 
