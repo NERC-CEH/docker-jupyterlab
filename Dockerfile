@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 FROM quay.io/jupyter/pyspark-notebook:python-3.11
 ENV NB_USER datalab                      
 ENV NB_UID 1000                                                                                       
