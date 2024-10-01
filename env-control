@@ -58,7 +58,7 @@ function create_env {
   jupyter lab build --minimize=False
 
   logger "Installing Dask, Spark, ipykernel & irkernel"
-  mamba install dask=$DASK_VERSION ipykernel r-irkernel readline pyspark -y
+  mamba install dask=$DASK_VERSION ipykernel r-irkernel readline pyspark panel nbconvert voila -y
   if [ "$?" != "0" ]; then
     error "Failed to install Dask, Spark ipython and irkernel"
   fi

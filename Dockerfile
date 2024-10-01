@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM quay.io/jupyter/pyspark-notebook:python-3.11
 ENV NB_USER datalab                      
 ENV NB_UID 1000                                                                                       
@@ -23,25 +24,32 @@ USER $NB_UID
 RUN conda install mamba -y
 
 # Install Panel from the pyviz channel
-RUN mamba install -y -c pyviz panel
+RUN mamba install -y conda-forge::panel
 # Install Plotly from Ployly channel
-RUN mamba install -y -c plotly plotly
-# Install dask labextension/ipywidgets/git integration/leaflet
+RUN mamba install -y conda-forge::plotly
+# Install nodejs
+RUN mamba install -y conda-forge::nodejs
 RUN mamba install -y dask-labextension ipywidgets jupyterlab-git ipyleaflet nodejs jupyter-collaboration
 
 #Bake Dask/Dask-Kubernetes libraries into base Conda Environment
 RUN mamba install -y -c conda-forge\
     ipyleaflet \
-    dask=$DASK_VERSION \
-    distributed=$DASK_VERSION \
-    dask-kubernetes=$DASK_VERSION \
-    dask-gateway=$DASK_VERISON \
-    jupyter-server-proxy=4 \
+    dask \
+    distributed \
+    dask-kubernetes \
+    dask-gateway \
+    jupyter-server-proxy \
+    bokeh \
+    tornado \
+    nbgitpuller \
     lz4 \ 
     voila \
     ipympl
 
-RUN jupyter lab build
+# Add Jupyter Collaboration
+RUN pip install jupyter-collaboration
+
+RUN jupyter lab build --minimize=True --dev-build=False
 
 USER root
 
